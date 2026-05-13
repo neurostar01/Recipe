@@ -16,12 +16,9 @@
   --accent: #c44536;
   --accent-soft: #e08e6e;
   --olive: #8a9a5b;
-  --gold: #d4a574;
   --line: #d9cdb8;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
   font-family: 'Gowun Dodum', sans-serif;
   background: var(--cream);
@@ -31,427 +28,242 @@ body {
     radial-gradient(circle at 20% 10%, rgba(212, 165, 116, 0.08) 0%, transparent 40%),
     radial-gradient(circle at 80% 90%, rgba(196, 69, 54, 0.06) 0%, transparent 40%);
 }
-
-/* 종이 텍스처 */
 body::before {
   content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    repeating-linear-gradient(45deg, transparent 0, transparent 2px, rgba(139, 110, 78, 0.015) 2px, rgba(139, 110, 78, 0.015) 4px);
+  position: fixed; inset: 0; pointer-events: none;
+  background-image: repeating-linear-gradient(45deg, transparent 0, transparent 2px, rgba(139, 110, 78, 0.015) 2px, rgba(139, 110, 78, 0.015) 4px);
   z-index: 1;
 }
-
 .app { position: relative; z-index: 2; max-width: 480px; margin: 0 auto; padding-bottom: 100px; }
 
 /* 헤더 */
-.header {
-  padding: 32px 24px 20px;
-  text-align: center;
-  position: relative;
-}
+.header { padding: 28px 24px 18px; text-align: center; position: relative; }
 .header::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 60px;
-  height: 2px;
-  background: var(--accent);
+  content: ''; position: absolute; bottom: 0; left: 50%;
+  transform: translateX(-50%); width: 60px; height: 2px; background: var(--accent);
 }
-.header h1 {
-  font-family: 'Gowun Batang', serif;
-  font-weight: 700;
-  font-size: 28px;
-  letter-spacing: 0.05em;
-  color: var(--ink);
-}
-.header .subtitle {
-  margin-top: 6px;
-  font-size: 12px;
-  color: var(--ink-soft);
-  letter-spacing: 0.15em;
-}
+.header h1 { font-family: 'Gowun Batang', serif; font-weight: 700; font-size: 26px; letter-spacing: 0.05em; }
+.header .subtitle { margin-top: 6px; font-size: 11px; color: var(--ink-soft); letter-spacing: 0.15em; }
 
-/* 메인 그리드 */
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  padding: 24px 20px;
+/* 동기화 상태바 */
+.sync-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 20px; background: var(--paper);
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  font-size: 11px; color: var(--ink-soft);
 }
+.sync-status { display: flex; align-items: center; gap: 6px; }
+.sync-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--olive);
+  animation: pulse 2s ease-in-out infinite;
+}
+.sync-dot.offline { background: #999; animation: none; }
+.sync-dot.error { background: var(--accent); animation: none; }
+.sync-dot.syncing { background: var(--gold, #d4a574); }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.token-btn {
+  background: none; border: 1px solid var(--line); padding: 4px 10px;
+  border-radius: 12px; font-family: inherit; font-size: 11px;
+  color: var(--ink-soft); cursor: pointer;
+}
+.token-btn:hover { border-color: var(--accent); color: var(--accent); }
 
+/* 카드 그리드 */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 20px; }
 .card {
-  background: var(--paper);
-  border-radius: 14px;
-  padding: 20px 14px;
-  text-align: center;
-  cursor: pointer;
-  border: 1px solid var(--line);
-  box-shadow: 2px 3px 0 rgba(42, 37, 32, 0.08);
-  transition: all 0.2s ease;
-  position: relative;
-  aspect-ratio: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  background: var(--paper); border-radius: 14px; padding: 20px 14px;
+  text-align: center; cursor: pointer; border: 1px solid var(--line);
+  box-shadow: 2px 3px 0 rgba(42, 37, 32, 0.08); transition: all 0.2s ease;
+  position: relative; aspect-ratio: 1;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
 }
 .card:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 rgba(42, 37, 32, 0.08); }
-.card .emoji { font-size: 56px; margin-bottom: 8px; filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.05)); }
-.card .name {
-  font-family: 'Gowun Batang', serif;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--ink);
-}
-.card .desc {
-  font-size: 11px;
-  color: var(--ink-soft);
-  margin-top: 2px;
-}
+.card .emoji { font-size: 56px; margin-bottom: 8px; }
+.card .name { font-family: 'Gowun Batang', serif; font-size: 15px; font-weight: 700; }
+.card .desc { font-size: 11px; color: var(--ink-soft); margin-top: 2px; }
 .card .delete {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  background: var(--accent);
-  color: white;
-  border: none;
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  font-size: 14px;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s;
-  line-height: 1;
+  position: absolute; top: 6px; right: 6px; background: var(--accent);
+  color: white; border: none; width: 24px; height: 24px; border-radius: 50%;
+  font-size: 14px; cursor: pointer; line-height: 1;
 }
-.card:hover .delete { opacity: 1; }
-
-.add-card {
-  background: transparent;
-  border: 2px dashed var(--line);
-  box-shadow: none;
-  color: var(--ink-soft);
-}
+.add-card { background: transparent; border: 2px dashed var(--line); box-shadow: none; color: var(--ink-soft); }
 .add-card:hover { border-color: var(--accent); color: var(--accent); }
 .add-card .plus { font-size: 36px; font-weight: 300; }
 .add-card .add-label { font-size: 12px; margin-top: 4px; }
 
-/* 빈 상태 */
-.empty {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--ink-soft);
-}
+.empty { text-align: center; padding: 60px 20px; color: var(--ink-soft); }
 .empty .big { font-size: 60px; margin-bottom: 16px; }
 .empty p { font-size: 14px; line-height: 1.7; }
 
-/* 모달 */
+/* 모달 공통 */
 .modal-bg {
-  position: fixed;
-  inset: 0;
-  background: rgba(42, 37, 32, 0.5);
-  z-index: 100;
-  display: none;
-  align-items: flex-end;
-  justify-content: center;
+  position: fixed; inset: 0; background: rgba(42, 37, 32, 0.55);
+  z-index: 100; display: none; align-items: flex-end; justify-content: center;
 }
 .modal-bg.show { display: flex; }
 .modal {
-  background: var(--cream);
-  width: 100%;
-  max-width: 480px;
-  border-radius: 20px 20px 0 0;
-  padding: 24px 20px 32px;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: slideUp 0.25s ease;
+  background: var(--cream); width: 100%; max-width: 480px;
+  border-radius: 20px 20px 0 0; padding: 24px 20px 32px;
+  max-height: 90vh; overflow-y: auto; animation: slideUp 0.25s ease;
 }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-.modal h2 {
-  font-family: 'Gowun Batang', serif;
-  font-size: 20px;
-  margin-bottom: 20px;
-  text-align: center;
-  color: var(--ink);
+.modal h2 { font-family: 'Gowun Batang', serif; font-size: 20px; margin-bottom: 8px; text-align: center; }
+.modal .helper {
+  font-size: 12px; color: var(--ink-soft); text-align: center;
+  margin-bottom: 20px; line-height: 1.6;
 }
 
-/* 폼 */
 .field { margin-bottom: 16px; }
-.field label {
-  display: block;
-  font-size: 12px;
-  color: var(--ink-soft);
-  margin-bottom: 6px;
-  letter-spacing: 0.05em;
-}
-.field input, .field textarea, .field select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--paper);
-  font-family: inherit;
-  font-size: 14px;
-  color: var(--ink);
+.field label { display: block; font-size: 12px; color: var(--ink-soft); margin-bottom: 6px; letter-spacing: 0.05em; }
+.field input, .field textarea {
+  width: 100%; padding: 10px 12px; border: 1px solid var(--line);
+  border-radius: 8px; background: var(--paper); font-family: inherit;
+  font-size: 14px; color: var(--ink);
 }
 .field textarea { min-height: 80px; resize: vertical; }
 .field input:focus, .field textarea:focus { outline: none; border-color: var(--accent); }
+.field .hint { font-size: 11px; color: var(--ink-soft); margin-top: 4px; line-height: 1.5; }
+.field .hint a { color: var(--accent); }
 
 .emoji-picker {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 6px;
-  background: var(--paper);
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  max-height: 140px;
-  overflow-y: auto;
+  display: grid; grid-template-columns: repeat(8, 1fr); gap: 6px;
+  background: var(--paper); padding: 10px; border-radius: 8px;
+  border: 1px solid var(--line); max-height: 140px; overflow-y: auto;
 }
 .emoji-picker button {
-  background: none;
-  border: none;
-  font-size: 22px;
-  padding: 6px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.15s;
+  background: none; border: none; font-size: 22px; padding: 6px;
+  cursor: pointer; border-radius: 6px; transition: background 0.15s;
 }
 .emoji-picker button:hover { background: var(--cream); }
 .emoji-picker button.selected { background: var(--accent-soft); }
 
 .btn-row { display: flex; gap: 10px; margin-top: 20px; }
 .btn {
-  flex: 1;
-  padding: 12px;
-  border-radius: 10px;
-  border: none;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
+  flex: 1; padding: 12px; border-radius: 10px; border: none;
+  font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer;
 }
 .btn-primary { background: var(--accent); color: white; }
 .btn-secondary { background: transparent; color: var(--ink-soft); border: 1px solid var(--line); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* 토큰 표시 박스 */
+.token-display {
+  background: var(--paper); border: 1px solid var(--line); border-radius: 10px;
+  padding: 14px; margin-bottom: 12px;
+}
+.token-display .label { font-size: 11px; color: var(--ink-soft); margin-bottom: 6px; letter-spacing: 0.05em; }
+.token-display .value {
+  font-family: 'Courier New', monospace; font-size: 14px; color: var(--ink);
+  word-break: break-all; padding: 8px; background: var(--cream);
+  border-radius: 6px; margin-bottom: 8px;
+}
+.copy-btn {
+  width: 100%; padding: 8px; background: var(--olive); color: white;
+  border: none; border-radius: 6px; font-family: inherit; cursor: pointer; font-size: 12px;
+}
+.copy-btn:hover { opacity: 0.9; }
+.divider {
+  text-align: center; margin: 16px 0;
+  color: var(--ink-soft); font-size: 12px; position: relative;
+}
+.divider::before, .divider::after {
+  content: ''; position: absolute; top: 50%;
+  width: 35%; height: 1px; background: var(--line);
+}
+.divider::before { left: 0; }
+.divider::after { right: 0; }
 
 /* 상세 화면 */
 .detail-bg {
-  position: fixed;
-  inset: 0;
-  background: var(--cream);
-  z-index: 90;
-  overflow-y: auto;
-  display: none;
+  position: fixed; inset: 0; background: var(--cream);
+  z-index: 90; overflow-y: auto; display: none;
 }
 .detail-bg.show { display: block; }
-
 .detail-header {
-  padding: 16px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--line);
-  background: var(--cream);
-  position: sticky;
-  top: 0;
-  z-index: 5;
+  padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--line); background: var(--cream);
+  position: sticky; top: 0; z-index: 5;
 }
 .back-btn, .edit-btn {
-  background: none;
-  border: none;
-  font-family: inherit;
-  font-size: 14px;
-  color: var(--ink);
-  cursor: pointer;
-  padding: 6px 10px;
+  background: none; border: none; font-family: inherit; font-size: 14px;
+  color: var(--ink); cursor: pointer; padding: 6px 10px;
 }
 .edit-btn { color: var(--accent); font-weight: 700; }
-
 .detail-content { padding: 20px; max-width: 480px; margin: 0 auto; }
-.detail-hero {
-  text-align: center;
-  padding: 20px 0 24px;
-  border-bottom: 1px dashed var(--line);
-  margin-bottom: 24px;
-}
+.detail-hero { text-align: center; padding: 20px 0 24px; border-bottom: 1px dashed var(--line); margin-bottom: 24px; }
 .detail-hero .emoji { font-size: 100px; }
-.detail-hero h1 {
-  font-family: 'Gowun Batang', serif;
-  font-size: 26px;
-  margin-top: 10px;
-  color: var(--ink);
-}
-.detail-hero .desc {
-  font-size: 13px;
-  color: var(--ink-soft);
-  margin-top: 6px;
-}
-
+.detail-hero h1 { font-family: 'Gowun Batang', serif; font-size: 26px; margin-top: 10px; }
+.detail-hero .desc { font-size: 13px; color: var(--ink-soft); margin-top: 6px; }
 .section { margin-bottom: 28px; }
 .section-title {
-  font-family: 'Gowun Batang', serif;
-  font-size: 16px;
-  color: var(--accent);
-  margin-bottom: 12px;
-  padding-bottom: 6px;
-  border-bottom: 2px solid var(--accent);
-  display: inline-block;
-  font-weight: 700;
+  font-family: 'Gowun Batang', serif; font-size: 16px; color: var(--accent);
+  margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid var(--accent);
+  display: inline-block; font-weight: 700;
 }
-
 .ingredient-list { list-style: none; }
 .ingredient-list li {
-  padding: 8px 0;
-  border-bottom: 1px dotted var(--line);
-  display: flex;
-  align-items: center;
-  font-size: 14px;
+  padding: 8px 0; border-bottom: 1px dotted var(--line);
+  display: flex; align-items: center; font-size: 14px;
 }
-.ingredient-list li::before {
-  content: '◦';
-  color: var(--accent);
-  margin-right: 10px;
-  font-size: 18px;
-}
-
+.ingredient-list li::before { content: '◦'; color: var(--accent); margin-right: 10px; font-size: 18px; }
 .step-list { list-style: none; counter-reset: step; }
 .step-list li {
-  padding: 12px 0 12px 40px;
-  position: relative;
-  font-size: 14px;
-  line-height: 1.7;
-  counter-increment: step;
+  padding: 12px 0 12px 40px; position: relative;
+  font-size: 14px; line-height: 1.7; counter-increment: step;
 }
 .step-list li::before {
-  content: counter(step);
-  position: absolute;
-  left: 0;
-  top: 10px;
-  width: 28px;
-  height: 28px;
-  background: var(--accent);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
-  font-family: 'Gowun Batang', serif;
+  content: counter(step); position: absolute; left: 0; top: 10px;
+  width: 28px; height: 28px; background: var(--accent); color: white;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; font-family: 'Gowun Batang', serif;
 }
-
-.photo-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-}
+.photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .photo-grid img {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid var(--line);
-  cursor: pointer;
+  width: 100%; aspect-ratio: 1; object-fit: cover;
+  border-radius: 8px; border: 1px solid var(--line); cursor: pointer;
 }
-
 .link-list { list-style: none; }
 .link-list li {
-  background: var(--paper);
-  padding: 10px 14px;
-  border-radius: 8px;
-  margin-bottom: 8px;
-  border-left: 3px solid var(--olive);
+  background: var(--paper); padding: 10px 14px; border-radius: 8px;
+  margin-bottom: 8px; border-left: 3px solid var(--olive);
 }
-.link-list a {
-  color: var(--ink);
-  text-decoration: none;
-  font-size: 13px;
-  word-break: break-all;
-}
+.link-list a { color: var(--ink); text-decoration: none; font-size: 13px; word-break: break-all; }
 .link-list a:hover { color: var(--accent); }
-
 .upload-area {
-  border: 2px dashed var(--line);
-  border-radius: 10px;
-  padding: 16px;
-  text-align: center;
-  cursor: pointer;
-  color: var(--ink-soft);
-  font-size: 13px;
+  display: block; border: 2px dashed var(--line); border-radius: 10px;
+  padding: 16px; text-align: center; cursor: pointer;
+  color: var(--ink-soft); font-size: 13px;
 }
 .upload-area:hover { border-color: var(--accent); }
-
-.thumb-preview {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-top: 8px;
-}
-.thumb-preview .thumb {
-  position: relative;
-  width: 60px;
-  height: 60px;
-}
-.thumb-preview img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 6px;
-}
+.thumb-preview { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.thumb-preview .thumb { position: relative; width: 60px; height: 60px; }
+.thumb-preview img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
 .thumb-preview .rm {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  background: var(--accent);
-  color: white;
-  border: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  font-size: 11px;
-  cursor: pointer;
-  line-height: 1;
+  position: absolute; top: -4px; right: -4px; background: var(--accent);
+  color: white; border: none; width: 18px; height: 18px;
+  border-radius: 50%; font-size: 11px; cursor: pointer; line-height: 1;
 }
-
-.link-input-row {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 6px;
-}
+.link-input-row { display: flex; gap: 6px; margin-bottom: 6px; }
 .link-input-row input { flex: 1; }
 .link-input-row button {
-  background: var(--accent);
-  color: white;
-  border: none;
-  padding: 0 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-family: inherit;
+  background: var(--accent); color: white; border: none;
+  padding: 0 14px; border-radius: 8px; cursor: pointer; font-family: inherit;
 }
 .link-tag {
-  background: var(--paper);
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 12px;
-  margin-bottom: 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background: var(--paper); padding: 6px 10px; border-radius: 6px;
+  font-size: 12px; margin-bottom: 4px;
+  display: flex; justify-content: space-between; align-items: center;
 }
-.link-tag .rm-link {
-  background: none;
-  border: none;
-  color: var(--accent);
-  cursor: pointer;
-  font-size: 14px;
-}
+.link-tag .rm-link { background: none; border: none; color: var(--accent); cursor: pointer; font-size: 14px; }
 
-.loading { text-align: center; padding: 40px; color: var(--ink-soft); }
+/* 토스트 */
+.toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: var(--cream); padding: 10px 18px;
+  border-radius: 20px; font-size: 13px; z-index: 200;
+  opacity: 0; transition: opacity 0.3s;
+}
+.toast.show { opacity: 1; }
 </style>
 </head>
 <body>
@@ -462,6 +274,14 @@ body::before {
     <div class="subtitle">MY RECIPE BOOK</div>
   </div>
 
+  <div class="sync-bar">
+    <div class="sync-status">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncText">시작 중...</span>
+    </div>
+    <button class="token-btn" id="tokenBtn">🔑 토큰 관리</button>
+  </div>
+
   <div id="grid" class="grid"></div>
   <div id="empty" class="empty" style="display:none;">
     <div class="big">🍳</div>
@@ -469,36 +289,93 @@ body::before {
   </div>
 </div>
 
-<!-- 레시피 추가/편집 모달 -->
+<!-- 셋업 모달 (최초 1회) -->
+<div class="modal-bg" id="setupModal">
+  <div class="modal">
+    <h2>처음 설정</h2>
+    <div class="helper">
+      모바일과 PC에서 같은 레시피를 보려면<br>
+      무료 클라우드 키와 토큰이 필요해요.
+    </div>
+
+    <div class="field">
+      <label>1) JSONBin 마스터 키</label>
+      <input type="text" id="apiKeyInput" placeholder="$2a$10$...">
+      <div class="hint">
+        <a href="https://jsonbin.io/login" target="_blank">jsonbin.io</a>에 무료 가입 → API Keys 메뉴 → "X-MASTER-KEY" 복사 (한 번만, 영구 무료)
+      </div>
+    </div>
+
+    <div class="field">
+      <label>2) 토큰 (이미 있다면)</label>
+      <input type="text" id="binIdInput" placeholder="비워두면 새로 만들어요">
+      <div class="hint">
+        다른 기기에서 만든 토큰이 있다면 입력하세요. 처음이면 비워두세요.
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="setupSaveBtn">시작하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 토큰 관리 모달 -->
+<div class="modal-bg" id="tokenModal">
+  <div class="modal">
+    <h2>토큰 관리</h2>
+    <div class="helper">이 토큰을 다른 기기에 입력하면<br>같은 레시피를 공유해요.</div>
+
+    <div class="token-display">
+      <div class="label">📋 내 토큰</div>
+      <div class="value" id="myToken">-</div>
+      <button class="copy-btn" id="copyTokenBtn">토큰 복사</button>
+    </div>
+
+    <div class="divider">또는</div>
+
+    <div class="field">
+      <label>다른 토큰으로 변경</label>
+      <input type="text" id="changeTokenInput" placeholder="다른 기기 토큰 붙여넣기">
+      <div class="hint">⚠️ 변경하면 현재 데이터는 안 보이고 그쪽 데이터를 가져와요.</div>
+    </div>
+
+    <div class="field">
+      <label>API 키 변경 (선택)</label>
+      <input type="text" id="changeKeyInput" placeholder="새 마스터 키">
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" id="tokenCloseBtn">닫기</button>
+      <button class="btn btn-primary" id="tokenApplyBtn">변경 적용</button>
+    </div>
+  </div>
+</div>
+
+<!-- 레시피 편집 모달 -->
 <div class="modal-bg" id="editModal">
   <div class="modal">
     <h2 id="modalTitle">새 레시피</h2>
-
     <div class="field">
       <label>음식 아이콘 선택</label>
       <div class="emoji-picker" id="emojiPicker"></div>
     </div>
-
     <div class="field">
       <label>음식 이름</label>
       <input type="text" id="foodName" placeholder="예: 김치찌개">
     </div>
-
     <div class="field">
       <label>한 줄 설명 (선택)</label>
       <input type="text" id="foodDesc" placeholder="예: 엄마가 알려준 비법">
     </div>
-
     <div class="field">
       <label>재료 (한 줄에 하나씩)</label>
       <textarea id="foodIngredients" placeholder="김치 200g&#10;돼지고기 150g&#10;두부 반 모"></textarea>
     </div>
-
     <div class="field">
       <label>요리 순서 (한 줄에 하나씩)</label>
-      <textarea id="foodSteps" placeholder="냄비에 기름을 두르고 돼지고기를 볶는다&#10;김치를 넣고 같이 볶는다&#10;물을 붓고 끓인다"></textarea>
+      <textarea id="foodSteps" placeholder="냄비에 기름을 두르고 돼지고기를 볶는다&#10;김치를 넣고 같이 볶는다"></textarea>
     </div>
-
     <div class="field">
       <label>📷 캡쳐 사진 추가</label>
       <label class="upload-area">
@@ -507,7 +384,6 @@ body::before {
       </label>
       <div class="thumb-preview" id="photoPreview"></div>
     </div>
-
     <div class="field">
       <label>🔗 참고 링크</label>
       <div class="link-input-row">
@@ -516,7 +392,6 @@ body::before {
       </div>
       <div id="linkPreview"></div>
     </div>
-
     <div class="btn-row">
       <button class="btn btn-secondary" id="cancelBtn">취소</button>
       <button class="btn btn-primary" id="saveBtn">저장</button>
@@ -524,7 +399,6 @@ body::before {
   </div>
 </div>
 
-<!-- 레시피 상세 화면 -->
 <div class="detail-bg" id="detailView">
   <div class="detail-header">
     <button class="back-btn" id="backBtn">← 뒤로</button>
@@ -533,47 +407,199 @@ body::before {
   <div class="detail-content" id="detailContent"></div>
 </div>
 
-<script>
-const EMOJIS = ['🍚','🍜','🍝','🍲','🍛','🍱','🍣','🍤','🍙','🍘','🍢','🍡','🍧','🍨','🍦','🥟','🥘','🍳','🥞','🧇','🥓','🥩','🍗','🍖','🌭','🍔','🍟','🍕','🥪','🌮','🌯','🥙','🧆','🥗','🥘','🍿','🧈','🧀','🥨','🥖','🍞','🥐','🥯','🥚','🧂','🌶️','🥬','🥦','🍅','🥑','🍆','🥒','🌽','🥕','🥔','🍠','🍄','🫘','🌰','🥜','🍇','🍈','🍉','🍊','🍋','🍌','🍍','🥭','🍎','🍏','🍐','🍑','🍒','🍓','🫐','🥝','🍵','☕','🧋','🥤','🍶','🍷','🍺','🍻','🥃','🍸','🍹'];
+<div class="toast" id="toast"></div>
 
+<script>
+const EMOJIS = ['🍚','🍜','🍝','🍲','🍛','🍱','🍣','🍤','🍙','🍘','🍢','🍡','🍧','🍨','🍦','🥟','🥘','🍳','🥞','🧇','🥓','🥩','🍗','🍖','🌭','🍔','🍟','🍕','🥪','🌮','🌯','🥙','🧆','🥗','🍿','🧀','🥨','🥖','🍞','🥐','🥯','🥚','🌶️','🥬','🥦','🍅','🥑','🍆','🥒','🌽','🥕','🥔','🍠','🍄','🥜','🍇','🍈','🍉','🍊','🍋','🍌','🍍','🥭','🍎','🍐','🍑','🍒','🍓','🥝','🍵','☕','🧋','🥤','🍶','🍷','🍺','🥃','🍸','🍹'];
+
+const SETTINGS_KEY = 'recipe_app_settings_v1';
+const LOCAL_BACKUP_KEY = 'recipe_app_local_backup_v1';
+const API_BASE = 'https://api.jsonbin.io/v3/b';
+const SYNC_INTERVAL = 8000; // 8초마다 자동 동기화
+
+let settings = { apiKey: '', binId: '' };
 let recipes = [];
 let editingId = null;
 let tempPhotos = [];
 let tempLinks = [];
 let selectedEmoji = '🍚';
+let lastServerVersion = 0; // 충돌 감지용
+let isSyncing = false;
 
-// Storage helpers
-async function loadRecipes() {
+// ============ 설정 저장 ============
+function loadSettings() {
   try {
-    const res = await window.storage.list('recipe:');
-    if (!res || !res.keys) { recipes = []; return; }
-    recipes = [];
-    for (const key of res.keys) {
-      try {
-        const r = await window.storage.get(key);
-        if (r) recipes.push(JSON.parse(r.value));
-      } catch(e) {}
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) settings = JSON.parse(raw);
+  } catch(e) {}
+}
+function saveSettings() {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+  } catch(e) {}
+}
+function loadLocalBackup() {
+  try {
+    const raw = localStorage.getItem(LOCAL_BACKUP_KEY);
+    if (raw) recipes = JSON.parse(raw);
+  } catch(e) { recipes = []; }
+}
+function saveLocalBackup() {
+  try {
+    localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(recipes));
+  } catch(e) {}
+}
+
+// ============ 토스트 ============
+let toastTimer = null;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ============ 상태 표시 ============
+function setSyncStatus(state, text) {
+  const dot = document.getElementById('syncDot');
+  const txt = document.getElementById('syncText');
+  dot.className = 'sync-dot ' + state;
+  txt.textContent = text;
+}
+
+// ============ JSONBin API ============
+async function apiCreateBin(data) {
+  const res = await fetch(API_BASE, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': settings.apiKey,
+      'X-Bin-Name': 'recipe-app-' + Date.now(),
+      'X-Bin-Private': 'true'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error('생성 실패: ' + res.status);
+  const json = await res.json();
+  return json.metadata.id;
+}
+
+async function apiReadBin() {
+  const res = await fetch(`${API_BASE}/${settings.binId}/latest`, {
+    headers: { 'X-Master-Key': settings.apiKey }
+  });
+  if (!res.ok) throw new Error('읽기 실패: ' + res.status);
+  return await res.json();
+}
+
+async function apiUpdateBin(data) {
+  const res = await fetch(`${API_BASE}/${settings.binId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Master-Key': settings.apiKey
+    },
+    body: JSON.stringify(data)
+  });
+  if (!res.ok) throw new Error('업데이트 실패: ' + res.status);
+  return await res.json();
+}
+
+// ============ 동기화 로직 ============
+// 데이터 구조: { version: 숫자, recipes: [...] }
+// version은 매번 1씩 증가 → 충돌 감지
+
+async function pullFromCloud() {
+  if (!settings.apiKey || !settings.binId) return;
+  try {
+    const json = await apiReadBin();
+    const remote = json.record;
+    if (remote && typeof remote.version === 'number') {
+      if (remote.version > lastServerVersion) {
+        recipes = remote.recipes || [];
+        lastServerVersion = remote.version;
+        saveLocalBackup();
+        render();
+        setSyncStatus('', `동기화됨 · v${remote.version}`);
+      } else {
+        setSyncStatus('', `최신 · v${lastServerVersion}`);
+      }
     }
-    recipes.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
   } catch(e) {
-    recipes = [];
+    setSyncStatus('error', '연결 오류');
+    console.error(e);
   }
 }
 
-async function saveRecipe(recipe) {
-  await window.storage.set('recipe:' + recipe.id, JSON.stringify(recipe));
+async function pushToCloud() {
+  if (!settings.apiKey || !settings.binId) return;
+  if (isSyncing) return;
+  isSyncing = true;
+  setSyncStatus('syncing', '저장 중...');
+  try {
+    // 충돌 방지: 먼저 최신 버전 확인
+    const json = await apiReadBin();
+    const remote = json.record;
+    const remoteVersion = (remote && typeof remote.version === 'number') ? remote.version : 0;
+
+    // 서버가 더 최신이면 병합 안내
+    if (remoteVersion > lastServerVersion) {
+      // 다른 기기에서 먼저 수정함 → 병합 정책: ID로 머지
+      const merged = mergeRecipes(remote.recipes || [], recipes);
+      recipes = merged;
+    }
+
+    const newVersion = Math.max(remoteVersion, lastServerVersion) + 1;
+    await apiUpdateBin({ version: newVersion, recipes: recipes, updatedAt: Date.now() });
+    lastServerVersion = newVersion;
+    saveLocalBackup();
+    setSyncStatus('', `동기화됨 · v${newVersion}`);
+    render();
+  } catch(e) {
+    setSyncStatus('error', '저장 실패');
+    toast('클라우드 저장 실패: ' + e.message);
+    console.error(e);
+  } finally {
+    isSyncing = false;
+  }
 }
 
-async function deleteRecipeStorage(id) {
-  await window.storage.delete('recipe:' + id);
+// 충돌 시 병합: 같은 ID는 더 최근 updatedAt 우선
+function mergeRecipes(remote, local) {
+  const map = new Map();
+  for (const r of remote) map.set(r.id, r);
+  for (const r of local) {
+    const existing = map.get(r.id);
+    if (!existing) {
+      map.set(r.id, r);
+    } else {
+      // 더 최근 수정본 우선
+      if ((r.updatedAt || 0) >= (existing.updatedAt || 0)) {
+        map.set(r.id, r);
+      }
+    }
+  }
+  return Array.from(map.values()).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
 }
 
-// UI 렌더링
+// 자동 동기화 (주기적 풀)
+let syncTimer = null;
+function startAutoSync() {
+  stopAutoSync();
+  syncTimer = setInterval(pullFromCloud, SYNC_INTERVAL);
+}
+function stopAutoSync() {
+  if (syncTimer) { clearInterval(syncTimer); syncTimer = null; }
+}
+
+// ============ UI 렌더링 ============
 function render() {
   const grid = document.getElementById('grid');
   const empty = document.getElementById('empty');
-
   grid.innerHTML = '';
+
+  recipes.sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
 
   recipes.forEach(r => {
     const card = document.createElement('div');
@@ -586,9 +612,8 @@ function render() {
     `;
     card.addEventListener('click', (e) => {
       if (e.target.classList.contains('delete')) {
-        if (confirm('이 레시피를 삭제할까요?')) {
-          deleteRecipe(r.id);
-        }
+        e.stopPropagation();
+        if (confirm('이 레시피를 삭제할까요?')) deleteRecipe(r.id);
       } else {
         showDetail(r.id);
       }
@@ -596,7 +621,6 @@ function render() {
     grid.appendChild(card);
   });
 
-  // 추가 카드
   const addCard = document.createElement('div');
   addCard.className = 'card add-card';
   addCard.innerHTML = `<div class="plus">+</div><div class="add-label">새 레시피</div>`;
@@ -612,7 +636,6 @@ function escapeHtml(str) {
   return d.innerHTML;
 }
 
-// 이모지 피커
 function renderEmojiPicker() {
   const picker = document.getElementById('emojiPicker');
   picker.innerHTML = '';
@@ -629,7 +652,6 @@ function renderEmojiPicker() {
   });
 }
 
-// 편집 모달 열기
 function openEditModal(id) {
   editingId = id;
   tempPhotos = [];
@@ -694,22 +716,21 @@ function renderLinkPreview() {
   });
 }
 
-// 사진 업로드
+// 사진 업로드 (압축)
 document.getElementById('photoInput').addEventListener('change', (e) => {
   const files = Array.from(e.target.files);
   files.forEach(file => {
     const reader = new FileReader();
     reader.onload = (ev) => {
-      // 이미지 압축 (큰 이미지 저장 제한 대응)
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const maxW = 800;
+        const maxW = 500;
         let w = img.width, h = img.height;
         if (w > maxW) { h = h * maxW / w; w = maxW; }
         canvas.width = w; canvas.height = h;
         canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        const compressed = canvas.toDataURL('image/jpeg', 0.7);
+        const compressed = canvas.toDataURL('image/jpeg', 0.6);
         tempPhotos.push(compressed);
         renderPhotoPreview();
       };
@@ -720,7 +741,6 @@ document.getElementById('photoInput').addEventListener('change', (e) => {
   e.target.value = '';
 });
 
-// 링크 추가
 document.getElementById('addLinkBtn').addEventListener('click', () => {
   const input = document.getElementById('linkInput');
   const val = input.value.trim();
@@ -737,13 +757,14 @@ document.getElementById('linkInput').addEventListener('keydown', (e) => {
   }
 });
 
-// 저장
+// 저장 → 클라우드 동기화
 document.getElementById('saveBtn').addEventListener('click', async () => {
   const name = document.getElementById('foodName').value.trim();
   if (!name) { alert('음식 이름을 입력해주세요.'); return; }
 
+  const now = Date.now();
   const recipe = {
-    id: editingId || ('r_' + Date.now() + '_' + Math.random().toString(36).slice(2,7)),
+    id: editingId || ('r_' + now + '_' + Math.random().toString(36).slice(2,7)),
     emoji: selectedEmoji,
     name: name,
     desc: document.getElementById('foodDesc').value.trim(),
@@ -751,29 +772,32 @@ document.getElementById('saveBtn').addEventListener('click', async () => {
     steps: document.getElementById('foodSteps').value.split('\n').map(s => s.trim()).filter(Boolean),
     photos: tempPhotos,
     links: tempLinks,
-    createdAt: editingId ? (recipes.find(r => r.id === editingId)?.createdAt || Date.now()) : Date.now()
+    createdAt: editingId ? (recipes.find(r => r.id === editingId)?.createdAt || now) : now,
+    updatedAt: now
   };
 
-  try {
-    await saveRecipe(recipe);
-    await loadRecipes();
-    render();
-    closeEditModal();
-  } catch(e) {
-    alert('저장 실패: ' + e.message + '\n(이미지가 너무 크지 않은지 확인해주세요)');
+  if (editingId) {
+    const idx = recipes.findIndex(r => r.id === editingId);
+    if (idx >= 0) recipes[idx] = recipe;
+  } else {
+    recipes.unshift(recipe);
   }
+
+  closeEditModal();
+  render();
+  await pushToCloud();
+  toast('저장 완료');
 });
 
 document.getElementById('cancelBtn').addEventListener('click', closeEditModal);
 
-// 삭제
 async function deleteRecipe(id) {
-  await deleteRecipeStorage(id);
-  await loadRecipes();
+  recipes = recipes.filter(r => r.id !== id);
   render();
+  await pushToCloud();
+  toast('삭제됨');
 }
 
-// 상세 화면
 function showDetail(id) {
   const r = recipes.find(x => x.id === id);
   if (!r) return;
@@ -785,49 +809,34 @@ function showDetail(id) {
       <h1>${escapeHtml(r.name)}</h1>
       ${r.desc ? `<div class="desc">${escapeHtml(r.desc)}</div>` : ''}
     </div>
-
     ${r.ingredients && r.ingredients.length ? `
     <div class="section">
       <div class="section-title">재료</div>
-      <ul class="ingredient-list">
-        ${r.ingredients.map(i => `<li>${escapeHtml(i)}</li>`).join('')}
-      </ul>
-    </div>
-    ` : ''}
-
+      <ul class="ingredient-list">${r.ingredients.map(i => `<li>${escapeHtml(i)}</li>`).join('')}</ul>
+    </div>` : ''}
     ${r.steps && r.steps.length ? `
     <div class="section">
       <div class="section-title">요리 순서</div>
-      <ol class="step-list">
-        ${r.steps.map(s => `<li>${escapeHtml(s)}</li>`).join('')}
-      </ol>
-    </div>
-    ` : ''}
-
+      <ol class="step-list">${r.steps.map(s => `<li>${escapeHtml(s)}</li>`).join('')}</ol>
+    </div>` : ''}
     ${r.photos && r.photos.length ? `
     <div class="section">
       <div class="section-title">사진</div>
-      <div class="photo-grid">
-        ${r.photos.map(p => `<img src="${p}" onclick="window.open('${p}','_blank')">`).join('')}
-      </div>
-    </div>
-    ` : ''}
-
+      <div class="photo-grid">${r.photos.map(p => `<img src="${p}" data-src="${p}" class="photo-item">`).join('')}</div>
+    </div>` : ''}
     ${r.links && r.links.length ? `
     <div class="section">
       <div class="section-title">참고 링크</div>
-      <ul class="link-list">
-        ${r.links.map(l => `<li><a href="${escapeHtml(l)}" target="_blank">${escapeHtml(l)}</a></li>`).join('')}
-      </ul>
-    </div>
-    ` : ''}
+      <ul class="link-list">${r.links.map(l => `<li><a href="${escapeHtml(l)}" target="_blank" rel="noopener">${escapeHtml(l)}</a></li>`).join('')}</ul>
+    </div>` : ''}
   `;
-
+  content.querySelectorAll('.photo-item').forEach(img => {
+    img.addEventListener('click', () => window.open(img.dataset.src, '_blank'));
+  });
   document.getElementById('editBtn').onclick = () => {
     document.getElementById('detailView').classList.remove('show');
     openEditModal(id);
   };
-
   document.getElementById('detailView').classList.add('show');
 }
 
@@ -835,29 +844,131 @@ document.getElementById('backBtn').addEventListener('click', () => {
   document.getElementById('detailView').classList.remove('show');
 });
 
-// 초기 로드
-(async () => {
-  await loadRecipes();
-  // 첫 사용시 샘플 데이터
-  if (recipes.length === 0) {
-    const samples = [
-      {
-        id: 'sample_1', emoji: '🍲', name: '김치찌개', desc: '엄마표 비법',
-        ingredients: ['묵은지 200g', '돼지고기 앞다리살 150g', '두부 1/2모', '대파 1대', '고춧가루 1큰술', '다진마늘 1작은술'],
-        steps: ['냄비에 기름을 두르고 돼지고기를 볶는다', '김치를 넣고 함께 볶아 신맛을 날린다', '물 400ml를 붓고 고춧가루, 마늘을 넣어 끓인다', '15분 끓인 후 두부와 대파를 넣고 5분 더 끓인다'],
-        photos: [], links: [], createdAt: Date.now() - 2000
-      },
-      {
-        id: 'sample_2', emoji: '🍝', name: '오일 파스타', desc: '15분 완성',
-        ingredients: ['스파게티 100g', '마늘 5쪽', '페페론치노 3개', '올리브오일 3큰술', '소금', '파슬리'],
-        steps: ['끓는 물에 소금을 넣고 면을 7분 삶는다', '팬에 올리브오일과 편마늘, 페페론치노를 약불에 익힌다', '면수 한 국자와 면을 넣고 빠르게 볶는다', '소금으로 간하고 파슬리를 뿌려 마무리'],
-        photos: [], links: [], createdAt: Date.now() - 1000
-      }
-    ];
-    for (const s of samples) await saveRecipe(s);
-    await loadRecipes();
+// ============ 셋업 모달 ============
+document.getElementById('setupSaveBtn').addEventListener('click', async () => {
+  const apiKey = document.getElementById('apiKeyInput').value.trim();
+  const binId = document.getElementById('binIdInput').value.trim();
+  if (!apiKey) { alert('마스터 키를 입력해주세요.'); return; }
+
+  const btn = document.getElementById('setupSaveBtn');
+  btn.disabled = true; btn.textContent = '연결 중...';
+
+  settings.apiKey = apiKey;
+
+  try {
+    if (binId) {
+      // 기존 토큰 사용
+      settings.binId = binId;
+      saveSettings();
+      const json = await apiReadBin();
+      const remote = json.record;
+      recipes = (remote && remote.recipes) ? remote.recipes : [];
+      lastServerVersion = (remote && typeof remote.version === 'number') ? remote.version : 0;
+      saveLocalBackup();
+    } else {
+      // 새 Bin 생성
+      const samples = getSamples();
+      const initData = { version: 1, recipes: samples, updatedAt: Date.now() };
+      const newBinId = await apiCreateBin(initData);
+      settings.binId = newBinId;
+      saveSettings();
+      recipes = samples;
+      lastServerVersion = 1;
+      saveLocalBackup();
+    }
+
+    document.getElementById('setupModal').classList.remove('show');
+    render();
+    setSyncStatus('', '연결됨');
+    startAutoSync();
+    toast('연결 완료!');
+  } catch(e) {
+    alert('연결 실패: ' + e.message + '\n키나 토큰을 확인해주세요.');
+  } finally {
+    btn.disabled = false; btn.textContent = '시작하기';
   }
-  render();
+});
+
+// ============ 토큰 관리 모달 ============
+document.getElementById('tokenBtn').addEventListener('click', () => {
+  document.getElementById('myToken').textContent = settings.binId || '(미설정)';
+  document.getElementById('changeTokenInput').value = '';
+  document.getElementById('changeKeyInput').value = '';
+  document.getElementById('tokenModal').classList.add('show');
+});
+
+document.getElementById('copyTokenBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(settings.binId);
+    toast('토큰 복사됨');
+  } catch(e) {
+    // 폴백
+    const ta = document.createElement('textarea');
+    ta.value = settings.binId;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); toast('토큰 복사됨'); } catch(e2) {}
+    document.body.removeChild(ta);
+  }
+});
+
+document.getElementById('tokenCloseBtn').addEventListener('click', () => {
+  document.getElementById('tokenModal').classList.remove('show');
+});
+
+document.getElementById('tokenApplyBtn').addEventListener('click', async () => {
+  const newToken = document.getElementById('changeTokenInput').value.trim();
+  const newKey = document.getElementById('changeKeyInput').value.trim();
+  if (!newToken && !newKey) { alert('변경할 내용을 입력해주세요.'); return; }
+
+  if (newKey) settings.apiKey = newKey;
+  if (newToken) settings.binId = newToken;
+  saveSettings();
+  lastServerVersion = 0; // 다시 풀
+
+  document.getElementById('tokenModal').classList.remove('show');
+  setSyncStatus('syncing', '동기화 중...');
+  await pullFromCloud();
+  toast('변경 적용됨');
+});
+
+// ============ 샘플 데이터 ============
+function getSamples() {
+  const now = Date.now();
+  return [
+    {
+      id: 'sample_1', emoji: '🍲', name: '김치찌개', desc: '엄마표 비법',
+      ingredients: ['묵은지 200g', '돼지고기 앞다리살 150g', '두부 1/2모', '대파 1대', '고춧가루 1큰술', '다진마늘 1작은술'],
+      steps: ['냄비에 기름을 두르고 돼지고기를 볶는다', '김치를 넣고 함께 볶아 신맛을 날린다', '물 400ml를 붓고 고춧가루, 마늘을 넣어 끓인다', '15분 끓인 후 두부와 대파를 넣고 5분 더 끓인다'],
+      photos: [], links: [], createdAt: now - 2000, updatedAt: now - 2000
+    },
+    {
+      id: 'sample_2', emoji: '🍝', name: '오일 파스타', desc: '15분 완성',
+      ingredients: ['스파게티 100g', '마늘 5쪽', '페페론치노 3개', '올리브오일 3큰술', '소금', '파슬리'],
+      steps: ['끓는 물에 소금을 넣고 면을 7분 삶는다', '팬에 올리브오일과 편마늘, 페페론치노를 약불에 익힌다', '면수 한 국자와 면을 넣고 빠르게 볶는다', '소금으로 간하고 파슬리를 뿌려 마무리'],
+      photos: [], links: [], createdAt: now - 1000, updatedAt: now - 1000
+    }
+  ];
+}
+
+// ============ 초기화 ============
+(async () => {
+  loadSettings();
+  loadLocalBackup();
+
+  if (!settings.apiKey || !settings.binId) {
+    // 첫 사용 → 셋업 모달
+    setSyncStatus('offline', '설정 필요');
+    document.getElementById('setupModal').classList.add('show');
+    render(); // 로컬 백업이라도 보여줌
+  } else {
+    setSyncStatus('syncing', '동기화 중...');
+    render();
+    try {
+      await pullFromCloud();
+    } catch(e) {}
+    startAutoSync();
+  }
 })();
 </script>
 </body>
